@@ -35,7 +35,7 @@ def test_user_response_shape() -> None:
 
 
 def test_token_response_shape() -> None:
-    t = TokenResponse(access_token="abc123")
+    t = TokenResponse(access_token="abc123", token_type="bearer")
     assert t.access_token == "abc123"
     assert t.token_type == "bearer"
 

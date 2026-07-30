@@ -1,8 +1,11 @@
+from functools import lru_cache
+
+from pydantic import Field
 from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    JWT_SECRET: str = ""
+    JWT_SECRET: str = Field(..., description="JWT signing secret (required, set via env)")
     DATABASE_URL: str = "sqlite:///./wardrobe.db"
     CORS_ORIGIN: str = "http://localhost:5173"
     UPLOAD_DIR: str = "uploaded_images"
@@ -14,4 +17,12 @@ class Settings(BaseSettings):
     }
 
 
-settings = Settings()
+@lru_cache
+def _get_settings() -> Settings:
+    return Settings()
+
+
+def __getattr__(name: str) -> object:
+    if name == "settings":
+        return _get_settings()
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

@@ -1,5 +1,8 @@
 """Tests for config module."""
 
+import pytest
+from pydantic import ValidationError
+
 from app.config import Settings
 
 
@@ -9,6 +12,12 @@ def test_settings_defaults() -> None:
     assert s.CORS_ORIGIN == "http://localhost:5173"
     assert s.UPLOAD_DIR == "uploaded_images"
     assert s.JWT_SECRET == "test-secret"
+
+
+def test_jwt_secret_required(monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    monkeypatch.delenv("JWT_SECRET", raising=False)
+    with pytest.raises(ValidationError):
+        Settings()
 
 
 def test_settings_from_env(monkeypatch) -> None:  # type: ignore[no-untyped-def]
