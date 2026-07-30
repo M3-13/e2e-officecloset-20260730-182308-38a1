@@ -6,7 +6,7 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     JWT_SECRET: str = Field(..., description="JWT signing secret (required, set via env)")
-    DATABASE_URL: str = "sqlite:///./wardrobe.db"
+    DATABASE_URL: str = Field(..., description="Database URL (required, set via env)")
     CORS_ORIGIN: str = "http://localhost:5173"
     UPLOAD_DIR: str = "uploaded_images"
 

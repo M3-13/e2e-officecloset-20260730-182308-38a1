@@ -7,7 +7,7 @@ from app.config import Settings
 
 
 def test_settings_defaults() -> None:
-    s = Settings(JWT_SECRET="test-secret")
+    s = Settings(JWT_SECRET="test-secret", DATABASE_URL="sqlite:///./wardrobe.db")
     assert s.DATABASE_URL == "sqlite:///./wardrobe.db"
     assert s.CORS_ORIGIN == "http://localhost:5173"
     assert s.UPLOAD_DIR == "uploaded_images"
@@ -16,6 +16,14 @@ def test_settings_defaults() -> None:
 
 def test_jwt_secret_required(monkeypatch) -> None:  # type: ignore[no-untyped-def]
     monkeypatch.delenv("JWT_SECRET", raising=False)
+    monkeypatch.setenv("DATABASE_URL", "sqlite:///./test.db")
+    with pytest.raises(ValidationError):
+        Settings()
+
+
+def test_database_url_required(monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    monkeypatch.delenv("DATABASE_URL", raising=False)
+    monkeypatch.setenv("JWT_SECRET", "test-secret")
     with pytest.raises(ValidationError):
         Settings()
 
